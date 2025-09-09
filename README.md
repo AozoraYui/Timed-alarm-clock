@@ -30,7 +30,7 @@
 ```bash
 wget -O ./plugins/example/Timed-alarm-clock.js https://gitee.com/aoisorayui/Timed-alarm-clock/raw/master/Timed-alarm-clock.js
 ```
-- **github**
+- **github**  
 **使用之前请安装依赖**  
 **在云崽根目录执行以下命令:**
 ```bash
