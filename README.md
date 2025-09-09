@@ -32,7 +32,7 @@ wget -O ./plugins/example/Timed-alarm-clock.js https://gitee.com/aoisorayui/Time
 ```
 - **github**
 ```bash
-wget -O ./plugins/example/Timed-alarm-clock.js https://github.com/Yuki-01/Timed-alarm-clock/raw/main/Timed-alarm-clock.js
+wget -O ./plugins/example/Timed-alarm-clock.js https://github.com/AozoraYui/Timed-alarm-clock/raw/main/Timed-alarm-clock.js
 ```
 **使用之前请安装依赖**  
 **在云崽根目录执行以下命令:**
