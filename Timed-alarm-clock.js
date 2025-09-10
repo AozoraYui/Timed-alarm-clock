@@ -57,21 +57,33 @@ export class AlarmClock extends plugin {
 --- 1. 创建闹钟 ---
 #定时闹钟 [时间] [@某人]
 
-我能听懂各种各样的时间说法，举几个栗子：
+我能听懂很多种时间说法，用起来非常方便！下面是一些例子：
 
-【相对日期】
+【常用说法】
 #定时闹钟 今天下午3点
+#定时闹钟 今晚9点
 #定时闹钟 明天晚上8点半
-#定时闹钟 后天中午
-PS：我目前最远只认识到“后天”哦，更远的时间就需要用具体的日期啦~
+#定时闹钟 明早7点30分
+#定时闹钟 后天中午12点
 
-【具体日期】
+【指定日期】
 #定时闹钟 9月12日 早上7:30
-#定时闹钟 2025年10月1号 16:00 @友人A
+#定时闹钟 9月15号上午8点
+#定时闹钟 2025年10月1号 16:00
+#定时闹钟 2025-11-20 20:00
+#定时闹钟 2025/11/20 20:00
 
-【超快速设置】
+【快速设置】 (设置“XX分钟/小时后”)
 #定时闹钟 10分钟后
 #定时闹钟 1小时后
+#定时闹钟 30分钟后提醒我
+
+【提醒对象】
+默认提醒你自己。如果想提醒别人，在时间后面加上 @对方
+#定时闹钟 明天下午3点 @张三
+#定时闹钟 1小时后 @群友A 别忘了开会
+
+PS：我目前最远只认识到“后天”哦，更远的时间就需要用具体的日期啦~
 
 --- 2. 管理闹钟 ---
 【查看本群闹钟队列】
@@ -80,7 +92,7 @@ PS：我目前最远只认识到“后天”哦，更远的时间就需要用具
 
 【按序号取消闹钟】
 #闹钟取消 1
-(序号在“#闹钟列表”里看哦~)`;
+(序号在“#闹钟列表”里查看哦~)`;
         await e.reply(helpMsg, true);
     } else {
         // --- 简化版帮助 ---
@@ -303,7 +315,16 @@ PS：我目前最远只认识到“后天”哦，更远的时间就需要用具
    * 时间字符串预处理器
    */
   preprocessTimeStr(timeStrRaw) {
-    let str = timeStrRaw.replace(/号/g, '日');
+    let str = timeStrRaw;
+    // 预处理，将模糊时间转为精确时间
+    str = str.replace(/今晚/g, '今天晚上');
+    str = str.replace(/明晚/g, '明天晚上');
+    str = str.replace(/后晚/g, '后天晚上');
+    str = str.replace(/今早/g, '今天早上');
+    str = str.replace(/明早/g, '明天早上');
+    str = str.replace(/后早/g, '后天早上');
+
+    str = str.replace(/号/g, '日');
     str = str.replace(/：|点/g, ':');
 
     let datePart = '';
@@ -321,9 +342,22 @@ PS：我目前最远只认识到“后天”哦，更远的时间就需要用具
             break;
         }
     }
+    
+    // --- 新增代码 Start ---
+    if (!datePart) {
+      // 优先匹配 YYYY-MM-DD 或 YYYY/MM/DD 格式
+      const standardDateMatch = timePart.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+      if (standardDateMatch) {
+          const dateStr = standardDateMatch[0];
+          datePart = moment(dateStr, "YYYY-MM-DD").format("YYYY-MM-DD");
+          timePart = timePart.replace(dateStr, '').trim();
+      }
+    }
+    // --- 新增代码 End ---
+
     if (!datePart) {
         const match = timePart.match(/(\d{4}年)?(\d{1,2}月)?(\d{1,2}日)/);
-        if (match) {
+        if (match && match[0]) {
             const dateStr = match[0];
             datePart = moment(dateStr, "YYYY年M月D日").format("YYYY-MM-DD");
             timePart = timePart.replace(dateStr, '').trim();
