@@ -525,7 +525,7 @@ PS：我目前最远只认识到“后天”哦，更远的时间就需要用具
         if (group) {
           let msg = [
             segment.at(alarmData.target_id),
-            ` 叮咚！闹钟时间到啦！\n\n${alarmData.content}`
+            ` 叮咚！闹钟时间到啦！\n${alarmData.content}`
           ];
           await group.sendMsg(msg);
           logger.info(`[定时闹钟] 已成功触发闹钟: ${alarmData.group_id} - @${alarmData.target_id}`);
