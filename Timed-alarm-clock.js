@@ -75,6 +75,8 @@ export class AlarmClock extends plugin {
 
 【快速设置】 (设置“XX分钟/小时后”)
 #定时闹钟 10分钟后
+#定时闹钟 半小时后
+#定时闹钟 一个半小时后
 #定时闹钟 1小时后
 #定时闹钟 30分钟后提醒我
 
@@ -343,7 +345,6 @@ PS：我目前最远只认识到“后天”哦，更远的时间就需要用具
         }
     }
     
-    // --- 新增代码 Start ---
     if (!datePart) {
       // 优先匹配 YYYY-MM-DD 或 YYYY/MM/DD 格式
       const standardDateMatch = timePart.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
@@ -353,7 +354,6 @@ PS：我目前最远只认识到“后天”哦，更远的时间就需要用具
           timePart = timePart.replace(dateStr, '').trim();
       }
     }
-    // --- 新增代码 End ---
 
     if (!datePart) {
         const match = timePart.match(/(\d{4}年)?(\d{1,2}月)?(\d{1,2}日)/);
@@ -422,17 +422,25 @@ PS：我目前最远只认识到“后天”哦，更远的时间就需要用具
     let alarmTime;
     let isRelative = false;
 
-    const minuteMatch = timeStrRaw.match(/(\d+)\s*分钟后/);
+    // --- 唯一修改点 Start ---
+    // 预处理 "半小时" 这类自然语言
+    let processedTimeStr = timeStrRaw;
+    processedTimeStr = processedTimeStr.replace(/一个半小时/g, '90分钟');
+    processedTimeStr = processedTimeStr.replace(/半小时/g, '30分钟');
+    processedTimeStr = processedTimeStr.replace(/一刻钟/g, '15分钟');
+
+    const minuteMatch = processedTimeStr.match(/(\d+)\s*分钟后/);
     if (minuteMatch) {
         alarmTime = moment().add(parseInt(minuteMatch[1]), 'minutes');
         isRelative = true;
     } else {
-        const hourMatch = timeStrRaw.match(/(\d+)\s*小时后/);
+        const hourMatch = processedTimeStr.match(/(\d+)\s*小时后/);
         if (hourMatch) {
             alarmTime = moment().add(parseInt(hourMatch[1]), 'hours');
             isRelative = true;
         }
     }
+    // --- 唯一修改点 End ---
     
     if (!isRelative) {
         const timeStr = this.preprocessTimeStr(timeStrRaw);
