@@ -35,7 +35,7 @@ wget -O ./plugins/example/Timed-alarm-clock.js https://gitee.com/aoisorayui/Time
 wget -O ./plugins/example/Timed-alarm-clock.js https://github.com/AozoraYui/Timed-alarm-clock/raw/main/Timed-alarm-clock.js
 ```
 **使用之前请安装依赖**  
-**在云崽根目录执行以下命令:**
+**在Yunzai根目录执行以下命令:**
 ```bash
 pnpm add moment-timezone -w
 ```
@@ -57,6 +57,7 @@ pnpm add moment-timezone -w
   - **快速设置**:
     - `#定时闹钟 10分钟后`
     - `#定时闹钟 1小时后`
+    - `#定时闹钟 半小时后`
   - **提醒他人**:
     - `#定时闹钟 明天下午3点 @张三`
 
