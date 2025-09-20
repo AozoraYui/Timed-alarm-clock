@@ -359,7 +359,14 @@ PS：我目前最远只认识到“后天”哦，更远的时间就需要用具
         const match = timePart.match(/(\d{4}年)?(\d{1,2}月)?(\d{1,2}日)/);
         if (match && match[0]) {
             const dateStr = match[0];
-            datePart = moment(dateStr, "YYYY年M月D日").format("YYYY-MM-DD");
+            // 检查正则表达式是否捕获到了年份部分 (match[1])
+            if (match[1]) { 
+                // 如果捕获到了年份 (例如 "2025年"), 使用包含年份的格式
+                datePart = moment(dateStr, "YYYY年M月D日").format("YYYY-MM-DD");
+            } else {
+                // 如果没有捕获到年份 (例如 "10月2日"), 使用不含年份的格式
+                datePart = moment(dateStr, "M月D日").format("YYYY-MM-DD");
+            }
             timePart = timePart.replace(dateStr, '').trim();
         } else {
             datePart = moment().format('YYYY-MM-DD');
@@ -374,17 +381,28 @@ PS：我目前最远只认识到“后天”哦，更远的时间就需要用具
 
     // 兼容 H:m 和 H 两种格式
     let hour = 0, minute = 0;
+    let timeExplicitlySet = false; // 在这里定义变量并设置初始值为 false
+
+    // 兼容 H:m 和 H 两种格式
     let timeMatch = timePart.match(/(\d{1,2}):(\d{1,2})/); // 优先匹配 H:m
     if (timeMatch) {
         hour = parseInt(timeMatch[1], 10);
         minute = parseInt(timeMatch[2], 10);
+        timeExplicitlySet = true; // 找到了时间，把标志设为 true
     } else {
         timeMatch = timePart.match(/(\d{1,2})/); // 降级匹配 H
         if (timeMatch) {
             hour = parseInt(timeMatch[1], 10);
+            timeExplicitlySet = true; // 找到了时间，把标志设为 true
         }
     }
-
+    
+    // 如果用户没有明确设置任何时间 (标志仍然是 false)，则使用默认值
+    if (!timeExplicitlySet) {
+        hour = 8; // 默认早上 8 点
+        minute = 0;
+    }
+    
     if (isPM && hour >= 1 && hour < 12) {
         hour += 12;
     }
